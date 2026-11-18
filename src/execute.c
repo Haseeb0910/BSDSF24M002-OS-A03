@@ -193,6 +193,8 @@ int handle_builtin(char** arglist) {
         printf("  history    show previously entered commands\n");
         printf("  !n         re-run command number n from history\n");
         printf("  jobs       list running background jobs\n");
+        printf("  set        show all shell variables\n");
+        printf("  NAME=value assign a shell variable (read it with $NAME)\n");
         return 1;
     }
 
