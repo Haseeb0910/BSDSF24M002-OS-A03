@@ -1,35 +1,65 @@
-# PUFCIT's custom UNIX Shell.
-# This is the updated read me this is edited by zalaid to fix the issue. 
+# BSDSF24M002-OS-A03: Custom UNIX Shell in C
 
-A simple command-line interpreter (shell) built in C for an Operating Systems course.
+A command-line shell built incrementally for the Operating Systems course
+(Programming Assignment 03, PUCIT). Each feature was developed on its own
+branch and published as a tagged release.
 
-## Quick Start
+## Build and run
 
-### Build the Shell
+Requires `gcc`, `make` and the GNU Readline development library
+(`sudo apt install libreadline-dev`).
 
-To compile the project, run the `make` command:
 ```bash
-make
+make            # builds bin/myshell
+./bin/myshell   # prompt: FCIT>
+make clean      # removes obj/ and bin/
 ```
 
-### Run the Shell
+## Features
 
-The compiled executable will be located in the `bin/` directory.
-```bash
-./bin/myshell
+| Tag | Feature |
+|---|---|
+| v1.0-base | Base shell: fork, exec, wait cycle |
+| v2 | Built-ins: `exit`, `cd`, `help`, `jobs` |
+| v3 | Command history: `history`, `!n` |
+| v4 | GNU Readline: line editing, arrow-key history, Tab completion |
+| v5 | I/O redirection (`<`, `>`) and a pipe (`\|`) |
+| v6 | Command chaining (`;`), background jobs (`&`), zombie reaping |
+| v7 | `if / then / else / fi` driven by exit status, quote handling |
+| v8 | Shell variables: `NAME=value`, `$NAME`, `set` |
+
+## Examples
+
+```
+FCIT> ls -l > files.txt
+FCIT> sort < files.txt | head -n 3
+FCIT> echo one ; sleep 2 ; echo two
+FCIT> sleep 10 &
+FCIT> jobs
+FCIT> MSG="Hello, World!"
+FCIT> echo $MSG
+FCIT> if grep "root" /etc/passwd > /dev/null
+> then
+> echo "Found root"
+> else
+> echo "Not found"
+> fi
 ```
 
-### Clean the Project
+## Known limitations
 
-To remove all compiled object files and the final executable:
-```bash
-make clean
+- One pipe per command line, and pipelines cannot run in the background.
+- `if` blocks cannot be nested, and `then` must be on its own line.
+- A `;` inside quotes still splits the line, and quoted operators
+  (`">"`, `"|"`) are still treated as operators.
+- Built-in commands always count as successful when used as an `if` condition.
+- No wildcard (`*`) expansion. Variable values containing spaces need quotes:
+  `NAME="two words"`.
+
+## Project layout
+
 ```
-
-## Directory Structure
-
-*   `/src`: All C source code files (`.c`).
-*   `/include`: All header files (`.h`).
-*   `/bin`: Contains the final compiled executable (`myshell`).
-*   `/obj`: Contains intermediate object files (`.o`) created during compilation.
-*   `Makefile`: The build script for the project.
+src/        main.c, shell.c, execute.c, history.c, jobs.c, vars.c
+include/    shell.h
+Makefile
+```
